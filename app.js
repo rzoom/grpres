@@ -1,13 +1,26 @@
-
-/**
- * Module dependencies.
- */
+/*
+ *  Use:  $ node app.js <group>
+ *
+ * */
 
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
+var fs = require('fs');
+var sqlite3 = require('sqlite3');
+
+var group = process.argv[2];
+var dbname = group + '.db';
+
+if ( !fs.existsSync( dbname ) )
+{
+    console.log( '*** Error:  no database file for this group:  ' + dbname );
+    process.exit( -1 );
+}
+
+var db = new sqlite3.Database( dbname, sqlite3.OPEN_READWRITE );
 
 var app = express();
 
@@ -33,3 +46,6 @@ app.get('/users', user.list);
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+
+

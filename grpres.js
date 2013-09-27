@@ -11,7 +11,8 @@
 //
 
 
-var sqlite3 = require("sqlite3");
+var fs = require('fs');
+var sqlite3 = require('sqlite3');
 
 var cmd = process.argv[2];
 
@@ -22,6 +23,13 @@ switch ( cmd )
     case "init":
         group = process.argv[3];
         dbname = group + ".db";
+
+        if ( fs.existsSync( dbname ) )
+        {
+            console.log( '*** Error:  database already exists for this group:  ' + dbname );
+            process.exit( -1 );
+        }
+
         db = new sqlite3.Database( dbname );
         db.serialize( function() {
             db.run("CREATE TABLE posts ( "     +
@@ -38,7 +46,6 @@ switch ( cmd )
                     "id INTEGER PRIMARY KEY, "   +
                     "name TEXT "                 +
                     ");");});
-        // TODO: handle the case where the database and table already exist.
         console.log( "Initialized database for group: " + group );
         break;
 

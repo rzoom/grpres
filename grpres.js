@@ -6,8 +6,8 @@
 //
 //
 // Options:
-// node grpres.js init <group>
-// node grpres.js addusers <group> <user1> <user2> ...
+// $ node grpres.js init <group>
+// $ node grpres.js addusers <group> <user1> <user2> ...
 //
 
 
@@ -21,6 +21,8 @@ var group, users, db, dbname, stmt;
 switch ( cmd )
 {
     case "init":
+        // TODO: init should allow for setting the group password.
+        // $ node grpres.js init <group> <password>
         group = process.argv[3];
         dbname = group + ".db";
 

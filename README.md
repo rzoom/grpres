@@ -10,7 +10,11 @@ Install dependencies:
     $ cd grpres
     $ npm install
 
-To run:
+Initialize a group:
+
+    $ node grpres.js init <group>
+
+Run the app:
 
     $ node app.js <group>
 

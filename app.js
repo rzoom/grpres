@@ -11,12 +11,8 @@ var path = require('path');
 var fs = require('fs');
 var sqlite3 = require('sqlite3');
 
-// Include modules for their handler functions.
-var routes = require('./routes');  // routes/index.js  (default)
-var submit = require('./routes/submit');  // routes/submit.js
-
 // Grab group name, set to global variable.
-global.group = process.argv[2];
+GLOBAL.group = process.argv[2];
 var dbname = group + '.db';
 
 // Connect to database.
@@ -26,7 +22,11 @@ if ( !fs.existsSync( dbname ) )
     process.exit( -1 );
 }
 
-var db = new sqlite3.Database( dbname, sqlite3.OPEN_READWRITE );
+GLOBAL.db = new sqlite3.Database( dbname, sqlite3.OPEN_READWRITE );
+
+// Include modules for their handler functions.
+var routes = require('./routes');  // routes/index.js  (default)
+var submit = require('./routes/submit');  // routes/submit.js
 
 // Create application.
 var app = express();

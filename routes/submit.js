@@ -10,7 +10,7 @@
 // * body or filename(s) (multiple files)
 exports.submit = function(req, res) {
     res.render( 'submit',
-            {title: 'Submit to '+global.group+' Research',
-             group: global.group} );
+            {title: 'Submit to '+GLOBAL.group+' Research',
+             group: GLOBAL.group} );
 };
 

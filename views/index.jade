@@ -1,8 +1,19 @@
 extends layout
 
 block content
-    h1= title
-    p Welcome to #{title}
-
+    h1 #{title}
+    | We have #{submission_count} posts
+    |   -  
+    a(href='/submit') Submit
+    br
+    br
+    - for ( var i in submissions )
+        - var sub = submissions[i]
+        div
+            a(href='/submissions/#{i}') #{sub.title}
+            |   -  #{sub.submitter}
+        | #{sub.summary}
+        br
+        br
 
 

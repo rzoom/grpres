@@ -9,22 +9,21 @@
 // $ node grpres.js init <group>
 // $ node grpres.js addusers <group> <user1> <user2> ...
 //
-
-//consider calling this from app.js, i.e. app.js <group> <init>; if we run everything through app.js, this whole thing becomes a bit more modular
 var fs = require('fs');
 var sqlite3 = require('sqlite3');
 
-var cmd = process.argv[2];
-
-var group, users, db, dbname, stmt;
-
-switch ( cmd )
+//cmd is an array based on command line values, i.e. 
+var databaseinit = function (cmd, dbname) 
 {
+//var group, users, db, dbname, stmt;
+
+  switch ( cmd )
+	{
     case "init":
         // TODO: init should allow for setting the group password.
         // $ node grpres.js init <group> <password>
-        group = process.argv[3];
-        dbname = group + ".db";
+        //group = process.argv[3];
+        //dbname = group + ".db";
 
         if ( fs.existsSync( dbname ) )
         {
@@ -68,5 +67,12 @@ switch ( cmd )
     default:
         console.log("*** Error: unknown command.  Use: init or addusers.");
         break;
+	}
+	
 }
+
+module.exports = {
+  databaseinit: databaseinit
+}
+
 

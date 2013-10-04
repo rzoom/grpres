@@ -10,16 +10,28 @@ var http = require('http');
 var path = require('path');
 var fs = require('fs');
 var sqlite3 = require('sqlite3');
+var database = require('./database');
 
 // Grab group name, set to global variable.
 GLOBAL.group = process.argv[2];
+
+//default if no name specified
+if (typeof(process.argv[2]) == 'undefined') 
+{
+	process.argv[2] = 'default';
+	group = process.argv[2];
+	console.log( 'no group name specified, group name set to \'default\'');
+}
+
 var dbname = group + '.db';
 
 // Connect to database.
 if ( !fs.existsSync( dbname ) )
 {
-    console.log( '*** Error:  no database file for this group:  ' + dbname );
-    process.exit( -1 );
+    //console.log( '*** Error:  no database file for this group:  ' + dbname );
+    //process.exit( -1 );
+	database.databaseinit('init', dbname);
+	console.log( 'no database found, initializing database named \'' + group + '\'');
 }
 
 GLOBAL.db = new sqlite3.Database( dbname, sqlite3.OPEN_READWRITE );

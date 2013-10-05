@@ -13,10 +13,11 @@ var fs = require('fs');
 var sqlite3 = require('sqlite3');
 
 //cmd is an array based on command line values, i.e. 
-var databaseinit = function (cmd, dbname) 
+var databaseinit = function (cmd, dbname, group, path) 
 {
 //var group, users, db, dbname, stmt;
-
+  //var newObject = new ActiveXObject("Scripting.FileSystemObject");
+  
   switch ( cmd )
 	{
     case "init":
@@ -48,6 +49,16 @@ var databaseinit = function (cmd, dbname)
                     "name TEXT "                 +
                     ");");});
         console.log( "Initialized database for group: " + group );
+		
+		//make subdirectory for group
+		var grppath = __dirname + '/groups//' + group;
+		
+		if (!fs.exists(grppath))
+		{
+			fs.mkdir(grppath, function() {
+			});
+		}
+		
         break;
 
     case "addusers":

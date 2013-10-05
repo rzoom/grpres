@@ -1,8 +1,12 @@
 extends layout
 
 block content
-    a(href='/'): h1 #{group}
-    p Submit to #{group} Research
+	a(href='/'): h1 back to #{group}
+	p submit to #{group} research
 
-
-
+	body
+		form(action = '/submit', method = 'post')
+			div
+				textarea(name='submitarea', rows="10", cols="50")
+			div
+				input(type='submit',name='submitbtn', value='Submit').submit-button

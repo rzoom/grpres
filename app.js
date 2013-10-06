@@ -65,9 +65,9 @@ if ('development' == app.get('env')) {
 // Set up routes and handlers.
 app.get('/', routes.index);
 app.get('/submit', submit.submit);  // use exported submit function in submit module.
+app.get( '/submissions/:id', submit.submission );  // display full info for the submission listed.
 // TODO:
 // * app.post( '/submit', ... );  <-- put into the database, redirect to '/'
-// * app.get( '/submissions', ... );  <-- display full info for the submission listed.
 
 // Listen on the port / run app.
 http.createServer(app).listen(app.get('port'), function(){

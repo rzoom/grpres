@@ -10,13 +10,9 @@ Install dependencies:
     $ cd grpres
     $ npm install
 
-Initialize a group:
-
-    $ node grpres.js init <group>
-
 Run the app:
 
-    $ node app.js <group>
+    $ node app.js -g <group>
 
 Check out http://localhost:3000 for results.
 

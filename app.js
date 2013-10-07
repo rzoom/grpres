@@ -1,5 +1,5 @@
 /*
- *  Use:  $ node app.js <group>
+ *  Use:  $ node app.js -g <group>
  *
  * */
 
@@ -12,6 +12,14 @@ var fs = require('fs');
 var sqlite3 = require('sqlite3');
 var database = require('./database');
 
+// handle command line args
+var argv = require('optimist')
+            .usage('Run the Group Research web app.\nUsage: $0')
+            .alias('g', 'group').describe('g', 'set the group to use').demand('g')
+            .argv;
+
+GLOBAL.group = argv.g;
+
 // Include modules for their handler functions.
 var routes = require('./routes/index');  // routes/index.js  (default)
 var submit = require('./routes/submit');  // routes/submit.js
@@ -23,29 +31,18 @@ var app = express();
 //add config shit
 var devenv = config.devenvironment(app, express);
 
-// Grab group name, set to global variable.
-var findgroup = config.parsecmd('groupname');
-if (findgroup[0]!=-1)
-{
-    GLOBAL.group = findgroup[1];
-}
-else
-{
-    GLOBAL.group = 'default';
-}
-    
-console.log( 'group name set to \'' + group + '\'');
+console.log( 'group name set to \'' + GLOBAL.group + '\'');
 
-var dbname = group + '.db';
+var dbname = GLOBAL.group + '.db';
 
 // Connect to database.
 if ( !fs.existsSync( dbname ) )
 {
-    database.databaseinit('init', dbname, group, path);
-    console.log( 'no database found, initializing database named \'' + group + '\'');
+    database.databaseinit('init', dbname, GLOBAL.group, path);
+    console.log( 'no database found, initializing database named \'' + GLOBAL.group + '\'');
 }
 
-var grppath = __dirname + '/groups//' + group + '//';
+var grppath = __dirname + '/groups//' + GLOBAL.group + '//';
 GLOBAL.db = new sqlite3.Database( dbname, sqlite3.OPEN_READWRITE );
 
 // Set node/express variables.

@@ -1,0 +1,25 @@
+extends layout
+
+block content
+	form(class='form-horizontal',action='/',method='POST',id='loginForm')
+			div.control-group
+				label(for='username',class='control-label') username
+				div.controls
+					input(type='text',id='username',name='username',placeholder='Username',class='input-xlarge',value='#{user}')
+			p
+			div.control-group
+				label(for='password',class='control-label') password
+				div.controls
+					input(type='password',id='password',name='password',placeholder='Password',class='input-xlarge')
+			p
+			div.control-group
+				label(for='rememberme',class='control-label') remember me
+				div.controls
+					input(type='checkbox',name='rememberme', checked)
+			p
+			div.control-group
+				div.controls
+					input(type='submit',class='btn btn-success', value='submit') login
+			p
+			if (error!='')
+				| #{error}

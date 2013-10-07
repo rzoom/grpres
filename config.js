@@ -1,5 +1,4 @@
 //file for handling initialization shit
-
 //load the app using NODE_ENV=<production or development> node app.js in linux; set NODE_ENV in the console, then execute node app.js in windows
 var devenvironment = function (app, express) 
 {
@@ -21,4 +20,3 @@ var devenvironment = function (app, express)
 module.exports = {
   devenvironment: devenvironment
 }
-

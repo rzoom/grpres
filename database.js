@@ -13,7 +13,7 @@ var fs = require('fs');
 var sqlite3 = require('sqlite3');
 
 //cmd is an array based on command line values, i.e. 
-var databaseinit = function (cmd, dbname, group, path) 
+var dbinit = function (cmd, dbname, group, path) 
 {
 //var group, users, db, dbname, stmt;
   //var newObject = new ActiveXObject("Scripting.FileSystemObject");
@@ -82,8 +82,23 @@ var databaseinit = function (cmd, dbname, group, path)
 	
 }
 
+var maketextfile = function(res, submittedtext, grppath) {
+var textname = 'nonsense'; //TODO make this dynamic
+var filetype = 'txt';
+
+	if (!fs.exists(grppath + filetype))
+	{
+		fs.mkdir(grppath + filetype, function() {
+		});
+	}
+	
+fs.writeFile(grppath + filetype + '//' + textname + '.' + filetype, submittedtext);
+res.redirect('/index');
+}
+
 module.exports = {
-  databaseinit: databaseinit
+  dbinit: dbinit,
+  maketextfile: maketextfile
 }
 
 

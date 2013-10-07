@@ -20,9 +20,11 @@ var argv = require('optimist')
 
 GLOBAL.group = argv.g;
 
+
 // Include modules for their handler functions.
 var routes = require('./routes/index');  // routes/index.js  (default)
 var submit = require('./routes/submit');  // routes/submit.js
+var login = require('./routes/login');  // routes/submit.js
 var config = require('./config'); //handle initial config shit
 
 // Create application.
@@ -31,14 +33,15 @@ var app = express();
 //add config shit
 var devenv = config.devenvironment(app, express);
 
-console.log( 'group name set to \'' + GLOBAL.group + '\'');
 
 var dbname = GLOBAL.group + '.db';
+GLOBAL.user = 'default';
+GLOBAL.errormessage = '';
 
 // Connect to database.
 if ( !fs.existsSync( dbname ) )
 {
-    database.databaseinit('init', dbname, GLOBAL.group, path);
+    database.dbinit('init', dbname, GLOBAL.group, path);
     console.log( 'no database found, initializing database named \'' + GLOBAL.group + '\'');
 }
 
@@ -53,24 +56,64 @@ app.set('view engine', 'jade');
 // Set up express middleware.
 app.use(express.favicon());
 //app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
+app.use(express.cookieParser());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+
 // TODO: add group level security.
 
 // Set up routes and handlers.
-app.get('/', routes.index);
+//handle login
+app.get('/', login.login);
+app.get('/index', routes.index);
 app.get('/submit', submit.submit);  // use exported submit function in submit module.
 app.get( '/submissions/:id', submit.submission );  // display full info for the submission listed.
-app.post( '/submit', function(req, res){
-var submittedtext = req.body.submitarea;
-var textname = 'nonsense'; //TODO make this dynamic
 
-console.log( 'you submitted the value ' + submittedtext);
-fs.writeFile(grppath + textname + '.txt', submittedtext);
-res.redirect('..');
+//handle posts
+app.post( '/submit', function(req, res){
+//if they clicked submit, save to database
+var submittedtext = req.body.submitarea;
+database.maketextfile(res, submittedtext, grppath);
+});
+
+app.post( '/', function(req, res){
+var username = req.body.username;
+var password = req.body.password;
+var checked = req.body.rememberme; //'on' or 'undefined'
+
+if (username == '')
+	{
+	errormessage = 'username can\'t be blank';
+	res.redirect('/');
+	}
+	else
+		{
+		errormessage = '';
+		user = username;
+		
+		//be sure to run npm install cookies to install this shit
+		
+		if (password == 'password')
+			{
+			if (checked == 'on')
+				{
+				res.cookie('username', user);
+				}
+			else
+				{
+				res.clearCookie('username');
+				}
+			res.redirect('/index');
+			}
+		else
+			{
+			errormessage = 'incorrect password';
+			res.redirect('/');
+			}
+		}
 });
 
 // Listen on the port / run app.

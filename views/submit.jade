@@ -1,7 +1,7 @@
 extends layout
 
 block content
-	a(href='/'): h1 back to #{group}
+	a(href='/index'): h1 back to #{group}
 	p submit to #{group} research
 
 	body
@@ -9,4 +9,4 @@ block content
 			div
 				textarea(name='submitarea', rows="10", cols="50")
 			div
-				input(type='submit',name='submitbtn', value='Submit').submit-button
+				input(type='submit',name='submitbtn', value='submit').submit-button

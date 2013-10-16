@@ -19,7 +19,7 @@ var dbinit = function (cmd, dbname, group, path)
   //var newObject = new ActiveXObject("Scripting.FileSystemObject");
   
   switch ( cmd )
-	{
+    {
     case "init":
         // TODO: init should allow for setting the group password.
         // $ node grpres.js init <group> <password>
@@ -43,22 +43,28 @@ var dbinit = function (cmd, dbname, group, path)
                     "summary TEXT, "           +
                     "body TEXT, "              +
                     "filename TEXT "           +
-                ");");
+                    ");");
             db.run("CREATE TABLE submitters ( "  +
                     "id INTEGER PRIMARY KEY, "   +
                     "name TEXT "                 +
                     ");");});
+            db.run("CREATE TABLE files ( "      +
+                    "id INTEGER PRIMARY KEY, "  +
+                    "post_id INTEGER, "         +  // foreign key needed?
+                    "name TEXT, "               +
+                    "path TEXT "                +
+                    ");");
         console.log( "Initialized database for group: " + group );
-		
-		//make subdirectory for group
-		var grppath = __dirname + '/groups//' + group;
-		
-		if (!fs.exists(grppath))
-		{
-			fs.mkdir(grppath, function() {
-			});
-		}
-		
+
+        //make subdirectory for group
+        var grppath = __dirname + '/groups//' + group;
+        
+        if (!fs.exists(grppath))
+        {
+            fs.mkdir(grppath, function() {
+            });
+        }
+        
         break;
 
     case "addusers":
@@ -78,20 +84,20 @@ var dbinit = function (cmd, dbname, group, path)
     default:
         console.log("*** Error: unknown command.  Use: init or addusers.");
         break;
-	}
-	
+    }
+    
 }
 
 var maketextfile = function(res, submittedtext, grppath) {
 var textname = 'nonsense'; //TODO make this dynamic
 var filetype = 'txt';
 
-	if (!fs.exists(grppath + filetype))
-	{
-		fs.mkdir(grppath + filetype, function() {
-		});
-	}
-	
+    if (!fs.exists(grppath + filetype))
+    {
+        fs.mkdir(grppath + filetype, function() {
+        });
+    }
+    
 fs.writeFile(grppath + filetype + '//' + textname + '.' + filetype, submittedtext);
 res.redirect('/index');
 }

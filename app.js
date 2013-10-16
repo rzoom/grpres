@@ -9,6 +9,7 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var fs = require('fs');
+var crypto = require('crypto');
 var sqlite3 = require('sqlite3');
 var database = require('./database');
 
@@ -45,6 +46,10 @@ if ( !fs.existsSync( dbname ) )
     console.log( 'no database found, initializing database named \'' + GLOBAL.group + '\'');
 }
 
+var sha = crypto.createHash('sha1');
+sha.update( GLOBAL.group + 'uzZqMLS2jLk4RRAZlPfE' + Date.now().toString() );
+var cookie_secret = sha.digest( 'hex' );
+
 var grppath = __dirname + '/groups//' + GLOBAL.group + '//';
 GLOBAL.db = new sqlite3.Database( dbname, sqlite3.OPEN_READWRITE );
 
@@ -56,12 +61,13 @@ app.set('view engine', 'jade');
 // Set up express middleware.
 app.use(express.favicon());
 //app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
-app.use(express.cookieParser());
+app.use(express.cookieParser( cookie_secret ));
+app.use(express.session());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
-app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(app.router);
 
 // TODO: add group level security.
 
@@ -74,46 +80,46 @@ app.get( '/submissions/:id', submit.submission );  // display full info for the 
 
 //handle posts
 app.post( '/submit', function(req, res){
-//if they clicked submit, save to database
-var submittedtext = req.body.submitarea;
-database.maketextfile(res, submittedtext, grppath);
+    //if they clicked submit, save to database
+    var submittedtext = req.body.submitarea;
+    database.maketextfile(res, submittedtext, grppath);
 });
 
 app.post( '/', function(req, res){
-var username = req.body.username;
-var password = req.body.password;
-var checked = req.body.rememberme; //'on' or 'undefined'
+    var username = req.body.username;
+    var password = req.body.password;
+    var checked = req.body.rememberme; //'on' or 'undefined'
 
-if (username == '')
-	{
-	errormessage = 'username can\'t be blank';
-	res.redirect('/');
-	}
-	else
-		{
-		errormessage = '';
-		user = username;
-		
-		//be sure to run npm install cookies to install this shit
-		
-		if (password == 'password')
-			{
-			if (checked == 'on')
-				{
-				res.cookie('username', user);
-				}
-			else
-				{
-				res.clearCookie('username');
-				}
-			res.redirect('/index');
-			}
-		else
-			{
-			errormessage = 'incorrect password';
-			res.redirect('/');
-			}
-		}
+    if (username == '')
+    {
+        errormessage = 'username can\'t be blank';
+        res.redirect('/');
+    }
+    else
+    {
+        errormessage = '';
+        user = username;
+        
+        //be sure to run npm install cookies to install this shit
+        
+        if (password == 'password')
+        {
+            if (checked == 'on')
+            {
+                res.cookie('username', user);
+            }
+            else
+            {
+                res.clearCookie('username');
+            }
+            res.redirect('/index');
+        }
+        else
+        {
+            errormessage = 'incorrect password';
+            res.redirect('/');
+        }
+    }
 });
 
 // Listen on the port / run app.

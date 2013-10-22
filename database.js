@@ -38,22 +38,17 @@ var dbinit = function (cmd, dbname, group, path)
                     "id INTEGER PRIMARY KEY, " +
                     "time TEXT, "              +
                     "submitter TEXT, "         +
-                    "type TEXT, "              +
                     "title TEXT, "             +
                     "summary TEXT, "           +
-                    "body TEXT, "              +
-                    "filename TEXT "           +
+                    "body TEXT "               +
                     ");");
-            db.run("CREATE TABLE submitters ( "  +
-                    "id INTEGER PRIMARY KEY, "   +
-                    "name TEXT "                 +
-                    ");");});
             db.run("CREATE TABLE files ( "      +
                     "id INTEGER PRIMARY KEY, "  +
                     "post_id INTEGER, "         +  // foreign key needed?
                     "name TEXT, "               +
                     "path TEXT "                +
                     ");");
+        });
         console.log( "Initialized database for group: " + group );
 
         //make subdirectory for group
@@ -65,20 +60,6 @@ var dbinit = function (cmd, dbname, group, path)
             });
         }
         
-        break;
-
-    case "addusers":
-        dbname = process.argv[3] + ".db";
-        db = new sqlite3.Database( dbname, sqlite3.OPEN_READWRITE );
-        users = process.argv.slice(4);
-        db.serialize();
-        stmt = db.prepare( "INSERT INTO submitters (name) VALUES (?);" );
-        for ( var i = 0; i < users.length; i++ )  {
-            stmt.run( users[i] );
-        }
-        stmt.finalize();
-        db.parallelize();
-        console.log("Inserted " + users.length + " users.");
         break;
 
     default:

@@ -20,7 +20,7 @@ var argv = require('optimist')
             .argv;
 
 GLOBAL.group = argv.g;
-
+GLOBAL.group_password = 'password';
 
 // Include modules for their handler functions.
 var routes = require('./routes/index');  // routes/index.js  (default)
@@ -63,6 +63,7 @@ app.use(express.favicon());
 //app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
 app.use(express.cookieParser( cookie_secret ));
 app.use(express.session());
+app.use(config.group_session_auth);
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
@@ -79,48 +80,14 @@ app.get('/submit', submit.submit);  // use exported submit function in submit mo
 app.get( '/submissions/:id', submit.submission );  // display full info for the submission listed.
 
 //handle posts
-app.post( '/submit', function(req, res){
+app.post( '/submit', function(req, res)
+{
     //if they clicked submit, save to database
     var submittedtext = req.body.submitarea;
     database.maketextfile(res, submittedtext, grppath);
 });
 
-app.post( '/', function(req, res){
-    var username = req.body.username;
-    var password = req.body.password;
-    var checked = req.body.rememberme; //'on' or 'undefined'
-
-    if (username == '')
-    {
-        errormessage = 'username can\'t be blank';
-        res.redirect('/');
-    }
-    else
-    {
-        errormessage = '';
-        user = username;
-        
-        //be sure to run npm install cookies to install this shit
-        
-        if (password == 'password')
-        {
-            if (checked == 'on')
-            {
-                res.cookie('username', user);
-            }
-            else
-            {
-                res.clearCookie('username');
-            }
-            res.redirect('/index');
-        }
-        else
-        {
-            errormessage = 'incorrect password';
-            res.redirect('/');
-        }
-    }
-});
+app.post( '/', config.verify_login );
 
 // Listen on the port / run app.
 http.createServer(app).listen(app.get('port'), function(){

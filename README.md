@@ -12,7 +12,7 @@ Install dependencies:
 
 Run the app:
 
-    $ node app.js -g <group>
+    $ node app.js -g <group> -p <pass>
 
 Check out http://localhost:3000 for results.
 

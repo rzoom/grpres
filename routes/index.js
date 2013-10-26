@@ -9,7 +9,7 @@
 
 exports.index = function(req, res) {
     
-    GLOBAL.db.all( 'SELECT id, title, summary, submitter FROM posts ORDER BY time DESC;',
+    GLOBAL.db.all( 'SELECT id, title, summary, submitter FROM posts ORDER BY id DESC;',
             function(err, rows) {
                 res.render('index', { title: GLOBAL.group+'  research',
                                     submission_count: rows.length,

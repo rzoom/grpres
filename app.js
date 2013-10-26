@@ -17,10 +17,11 @@ var database = require('./database');
 var argv = require('optimist')
             .usage('Run the Group Research web app.\nUsage: $0')
             .alias('g', 'group').describe('g', 'set the group to use').demand('g')
+            .alias('p', 'pass').describe('p', 'set the group password').demand('p')
             .argv;
 
 GLOBAL.group = argv.g;
-GLOBAL.group_password = 'password';
+GLOBAL.group_password = argv.p;
 
 // Include modules for their handler functions.
 var routes = require('./routes/index');  // routes/index.js  (default)
@@ -36,7 +37,6 @@ var devenv = config.devenvironment(app, express);
 
 
 var dbname = GLOBAL.group + '.db';
-GLOBAL.user = 'default';
 GLOBAL.errormessage = '';
 
 // Connect to database.
@@ -47,7 +47,7 @@ if ( !fs.existsSync( dbname ) )
 }
 
 var sha = crypto.createHash('sha1');
-sha.update( GLOBAL.group + 'uzZqMLS2jLk4RRAZlPfE' + Date.now().toString() );
+sha.update( GLOBAL.group + GLOBAL.password + Date.now().toString() );
 var cookie_secret = sha.digest( 'hex' );
 
 var grppath = __dirname + '/groups//' + GLOBAL.group + '//';
@@ -63,21 +63,19 @@ app.use(express.favicon());
 //app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
 app.use(express.cookieParser( cookie_secret ));
 app.use(express.session());
-app.use(config.group_session_auth);
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(app.router);
 
-// TODO: add group level security.
-
 // Set up routes and handlers.
 //handle login
-app.get('/', login.login);
+//app.get('/', login.login);
+app.get('/', function(req, res) { res.redirect('/index') });
 app.get('/index', routes.index);
 app.get('/submit', submit.submit);  // use exported submit function in submit module.
-app.get( '/submissions/:id', submit.submission );  // display full info for the submission listed.
+app.get('/submissions/:id', submit.submission);  // display full info for the submission listed.
 
 //handle posts
 app.post( '/submit', function(req, res)
@@ -87,7 +85,7 @@ app.post( '/submit', function(req, res)
     database.maketextfile(res, submittedtext, grppath);
 });
 
-app.post( '/', config.verify_login );
+//app.post( '/', config.verify_login );
 
 // Listen on the port / run app.
 http.createServer(app).listen(app.get('port'), function(){

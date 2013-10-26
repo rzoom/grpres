@@ -17,44 +17,10 @@ var devenvironment = function ( app, express )
     }
 }
 
-
-var group_session_auth = function ( err, req, res, next )
-{
-    if ( req.cookies.username == GLOBAL.group )
-    {
-        next(err);
-    }
-    else
-    {
-        res.clearCookie('username');
-        res.redirect('/');
-    }
-}
-
-
-var verify_login = function ( req, res )
-{
-    var username = req.body.username;
-    var password = req.body.password;
-
-    if ( username == GLOBAL.group &&
-         password == GLOBAL.group_password )
-    {
-        res.cookie('username', username);
-        res.redirect('/index');
-    }
-    else
-    {
-        errormessage = 'Incorrect Password';
-        res.redirect('/');
-    }
-}
-
+// TODO: authorization!
 
 module.exports = {
-    devenvironment: devenvironment,
-    group_session_auth: group_session_auth,
-    verify_login: verify_login
+    devenvironment: devenvironment
 }
 
 

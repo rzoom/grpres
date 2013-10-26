@@ -1,12 +1,28 @@
 extends layout
 
 block content
-	a(href='/index'): h1 back to #{group}
-	p submit to #{group} research
 
-	body
-		form(action = '/submit', method = 'post')
-			div
-				textarea(name='submitarea', rows="10", cols="50")
-			div
-				input(type='submit',name='submitbtn', value='submit').submit-button
+    center: h1 Submit to #{group}
+    
+    br
+
+    form(action = '/submit', method = 'post')
+        p Summary
+        div
+            textarea(name='summary', rows='4', cols='80')
+
+        p Files
+        div
+            input(type='file', name='file1', size='40')
+        div
+            input(type='file', name='file2', size='40')
+        div
+            input(type='file', name='file3', size='40')
+
+        p Body
+        div
+            textarea(name='submitarea', rows='20', cols='80')
+        br
+
+        div
+            input(type='submit', name='submitbtn', value='Submit').submit-button

@@ -7,6 +7,15 @@ block content
     br
 
     form(action = '/submit', method = 'post')
+
+        p Title
+        div
+            textarea(name='title', rows='1', cols='80')
+
+        p Submitter
+        div
+            textarea(name='submitter', rows='1', cols='40')
+
         p Summary
         div
             textarea(name='summary', rows='4', cols='80')
@@ -21,7 +30,7 @@ block content
 
         p Body
         div
-            textarea(name='submitarea', rows='20', cols='80')
+            textarea(name='submitarea', rows='20', cols='80', placeholder='Optional')
         br
 
         div

@@ -8,10 +8,16 @@
 // * summary
 // * submitter
 // * body or filename(s) (multiple files)
-exports.submit = function(req, res) {
+exports.submit = function ( req, res ) {
     res.render( 'submit',
             {title: 'submit to '+GLOBAL.group+' research',
              group: GLOBAL.group} );
+};
+
+
+exports.submit_post = function ( req, res ) {
+//    GLOBAL.db.run( 'INSERT INTO posts (time, submitter, title, summary) VALUES ' +
+//            '()')
 };
 
 

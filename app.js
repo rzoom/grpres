@@ -67,6 +67,7 @@ app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.basicAuth(GLOBAL.group, GLOBAL.group_password));
 app.use(app.router);
 
 // Set up routes and handlers.

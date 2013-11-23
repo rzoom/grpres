@@ -6,32 +6,26 @@ block content
     
     br
 
-    form(action = '/submit', method = 'post')
+    form(action = '/submit', enctype='multipart/form-data', method = 'post')
 
         p Title
-        div
-            textarea(name='title', rows='1', cols='80')
+        textarea(name='title', rows='1', cols='80')
 
         p Submitter
-        div
-            textarea(name='submitter', rows='1', cols='40')
+        textarea(name='submitter', rows='1', cols='40')
 
         p Summary
-        div
-            textarea(name='summary', rows='4', cols='80')
+        textarea(name='summary', rows='4', cols='80')
 
         p Files
-        div
-            input(type='file', name='file1', size='40')
-        div
-            input(type='file', name='file2', size='40')
-        div
-            input(type='file', name='file3', size='40')
+        input(type='file', name='file1', size='40')
+        input(type='file', name='file2', size='40')
+        input(type='file', name='file3', size='40')
 
         p Body
-        div
-            textarea(name='submitarea', rows='20', cols='80', placeholder='Optional')
+        textarea(name='submitarea', rows='20', cols='80', placeholder='Optional')
         br
 
-        div
-            input(type='submit', name='submitbtn', value='Submit').submit-button
+        input(type='submit', name='submitbtn', value='Submit').submit-button
+
+

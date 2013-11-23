@@ -36,6 +36,13 @@ var app = express();
 var devenv = config.devenvironment(app, express);
 
 
+GLOBAL.grppath = __dirname + '/' + GLOBAL.group;
+if ( !fs.existsSync( GLOBAL.grppath ) )
+{
+    fs.mkdirSync( GLOBAL.grppath );
+}
+
+// TODO: Move the database file into the group dir.
 var dbname = GLOBAL.group + '.db';
 GLOBAL.errormessage = '';
 
@@ -50,7 +57,7 @@ var sha = crypto.createHash('sha1');
 sha.update( GLOBAL.group + GLOBAL.password + Date.now().toString() );
 var cookie_secret = sha.digest( 'hex' );
 
-var grppath = __dirname + '/groups//' + GLOBAL.group + '//';
+
 GLOBAL.db = new sqlite3.Database( dbname, sqlite3.OPEN_READWRITE );
 
 // Set node/express variables.
@@ -71,25 +78,14 @@ app.use(express.basicAuth(GLOBAL.group, GLOBAL.group_password));
 app.use(app.router);
 
 // Set up routes and handlers.
-//handle login
-//app.get('/', login.login);
-app.get('/', function(req, res) { res.redirect('/index') });
-app.get('/index', routes.index);
-app.get('/submit', submit.submit);  // use exported submit function in submit module.
-app.get('/submissions/:id', submit.submission);  // display full info for the submission listed.
-
-//handle posts
-app.post( '/submit', function(req, res)
-{
-    //if they clicked submit, save to database
-    var submittedtext = req.body.submitarea;
-    database.maketextfile(res, submittedtext, grppath);
-});
-
-//app.post( '/', config.verify_login );
+app.get( '/', function(req, res) { res.redirect('/index') } );
+app.get( '/index', routes.index );
+app.get( '/submit', submit.submit );  // use exported submit function in submit module.
+app.get( '/submissions/:id', submit.submission );  // display full info for the submission listed.
+app.post( '/submit', submit.submit_post );
 
 // Listen on the port / run app.
-http.createServer(app).listen(app.get('port'), function(){
+http.createServer(app).listen(app.get('port'), function() {
   console.log('Express server listening on port ' + app.get('port'));
 });
 

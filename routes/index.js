@@ -3,9 +3,7 @@
  * GET home page.
  */
 
-// TODO: This should display the top-level list of all submissions.
-// * title with link to full page
-// * summary
+// TODO: Fill in header and footer in layout.jade
 
 exports.index = function(req, res) {
     

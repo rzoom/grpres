@@ -15,77 +15,44 @@ var sqlite3 = require('sqlite3');
 //cmd is an array based on command line values, i.e. 
 var dbinit = function (cmd, dbname, group, path) 
 {
-//var group, users, db, dbname, stmt;
-  //var newObject = new ActiveXObject("Scripting.FileSystemObject");
-  
-  switch ( cmd )
+    switch ( cmd )
     {
-    case "init":
-        // TODO: init should allow for setting the group password.
-        // $ node grpres.js init <group> <password>
-        //group = process.argv[3];
-        //dbname = group + ".db";
+        case "init":
 
-        if ( fs.existsSync( dbname ) )
-        {
-            console.log( '*** Error:  database already exists for this group:  ' + dbname );
-            process.exit( -1 );
-        }
+            if ( fs.existsSync( dbname ) )
+            {
+                console.log( '*** Error:  database already exists for this group:  ' + dbname );
+                process.exit( -1 );
+            }
 
-        db = new sqlite3.Database( dbname );
-        db.serialize( function() {
-            db.run("CREATE TABLE posts ( "     +
-                    "id INTEGER PRIMARY KEY, " +
-                    "time TEXT, "              +
-                    "submitter TEXT, "         +
-                    "title TEXT, "             +
-                    "summary TEXT, "           +
-                    "body TEXT "               +
-                    ");");
-            db.run("CREATE TABLE files ( "      +
-                    "id INTEGER PRIMARY KEY, "  +
-                    "post_id INTEGER, "         +  // foreign key needed?
-                    "name TEXT, "               +
-                    "path TEXT "                +
-                    ");");
-        });
-        console.log( "Initialized database for group: " + group );
-
-        //make subdirectory for group
-        var grppath = __dirname + '/groups//' + group;
-        
-        if (!fs.exists(grppath))
-        {
-            fs.mkdir(grppath, function() {
+            db = new sqlite3.Database( dbname );
+            db.serialize( function() {
+                db.run("CREATE TABLE posts ( "     +
+                        "id INTEGER PRIMARY KEY, " +
+                        "time TEXT, "              +
+                        "submitter TEXT, "         +
+                        "title TEXT, "             +
+                        "summary TEXT "           +
+                        ");");
+                db.run("CREATE TABLE files ( "      +
+                        "id INTEGER PRIMARY KEY, "  +
+                        "post_id INTEGER, "         +  // foreign key needed?
+                        "name TEXT, "               +
+                        "path TEXT "                +
+                        ");");
             });
-        }
-        
-        break;
+            console.log( "Initialized database for group: " + group );
+            break;
 
-    default:
-        console.log("*** Error: unknown command.  Use: init or addusers.");
-        break;
+        default:
+            console.log("*** Error: unknown command.  Use: init or addusers.");
+            break;
     }
-    
 }
 
-var maketextfile = function(res, submittedtext, grppath) {
-var textname = 'nonsense'; //TODO make this dynamic
-var filetype = 'txt';
-
-    if (!fs.exists(grppath + filetype))
-    {
-        fs.mkdir(grppath + filetype, function() {
-        });
-    }
-    
-fs.writeFile(grppath + filetype + '//' + textname + '.' + filetype, submittedtext);
-res.redirect('/index');
-}
 
 module.exports = {
-  dbinit: dbinit,
-  maketextfile: maketextfile
+  dbinit: dbinit
 }
 
 

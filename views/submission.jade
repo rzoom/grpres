@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    h1 #{subtitle}
+    u: h3 #{subtitle}
     | <b>Submitted by:</b>  #{submitter}
     | <b>Date:</b>  #{date}
     br
@@ -23,5 +23,7 @@ block content
     br
     | #{body}
     br
+    br
+    a(href='/delete/#{pid}') Delete this post
 
 

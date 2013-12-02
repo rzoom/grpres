@@ -32,11 +32,11 @@ var dbinit = function (cmd, dbname, group, path)
                         "time TEXT, "              +
                         "submitter TEXT, "         +
                         "title TEXT, "             +
-                        "summary TEXT "           +
+                        "summary TEXT "            +
                         ");");
                 db.run("CREATE TABLE files ( "      +
                         "id INTEGER PRIMARY KEY, "  +
-                        "post_id INTEGER, "         +  // foreign key needed?
+                        "post_id INTEGER, "         +
                         "name TEXT, "               +
                         "path TEXT "                +
                         ");");

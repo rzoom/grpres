@@ -10,8 +10,7 @@ var moment = require('moment');
 
 exports.submit = function ( req, res ) {
     res.render( 'submit',
-            {title: 'submit to '+GLOBAL.group+' research',
-             group: GLOBAL.group} );
+            { group: GLOBAL.group } );
 };
 
 
@@ -20,7 +19,7 @@ var save_files_from_req = function( req, num ) {
     var post_path = GLOBAL.grppath + '/post_' + num;
 
     if ( !fs.existsSync(post_path) )
-    { fs.mkdir( post_path ); }
+    { fs.mkdirSync( post_path ); }
 
     if ( req.body.submitarea )
     { fs.writeFileSync( post_path+'/body.txt', req.body.submitarea ); }
@@ -34,7 +33,8 @@ var save_files_from_req = function( req, num ) {
         {
             var file_path = post_path + '/' + f.name;
             var dl_path = 'post_' + num + '/' + f.name;
-            fs.renameSync( f.path, file_path );
+            fs.writeFileSync( file_path, String( fs.readFileSync( f.path ) ) );
+            fs.unlinkSync( f.path );
             GLOBAL.db.run( "INSERT INTO files (post_id, name, path) VALUES (?,?,?);",
                     num, f.name, dl_path );
         }
@@ -47,11 +47,9 @@ var save_files_from_req = function( req, num ) {
 
 exports.submit_post = function( req, res ) {
 
-    // TODO: moment
     GLOBAL.db.run(
         "INSERT INTO posts (time, submitter, title, summary) VALUES (?,?,?,?);",
-        'Aug 18, 2013', req.body.submitter, req.body.title, req.body.summary );
-        //moment(), req.body.submitter, req.body.title, req.body.summary );
+        moment().format('MMM DD YYYY'), req.body.submitter, req.body.title, req.body.summary );
 
     GLOBAL.db.get( "SELECT last_insert_rowid() AS num FROM posts;", function (err, row) {
         save_files_from_req( req, row['num'] ); } );
@@ -74,16 +72,40 @@ exports.submission = function( req, res ) {
             // Grab the associated files.
             GLOBAL.db.all( 'SELECT * FROM files WHERE post_id=?;', pid,
                 function(err, files) {
-                    // TODO: Display the content of body.txt
+                    var body_path = GLOBAL.grppath + '/post_' + pid + '/body.txt';
+                    var body;
+
+                    if ( fs.existsSync( body_path ) )
+                    { body = fs.readFileSync( body_path ); }
+                    else
+                    { body = '... Empty ...'; }
+
                     res.render( 'submission', { title: GLOBAL.group + ': ' + post['title'],
+                                                pid: pid,
                                                 subtitle: post['title'],
                                                 summary: post['summary'],
                                                 submitter: post['submitter'],
                                                 date: post['time'],
                                                 files: files,
-                                                body: 'PLACEHOLDER' } );
-                
+                                                body: body } );
                 });
         });
 };
+
+
+exports.delete = function( req, res ) {
+
+    // This just deletes the info from the database, the files are still there.
+
+    var pid = req.params['id'];
+
+    console.log( 'Deleting post ' + pid );
+
+    GLOBAL.db.run( 'DELETE FROM posts WHERE id=?;', pid );
+    GLOBAL.db.run( 'DELETE FROM files WHERE post_id=?;', pid );
+
+    res.redirect( '/index' );
+};
+
+
 

@@ -1,18 +1,14 @@
 extends layout
 
 block content
-    h1 #{title}
-    | we have #{submission_count} posts
-    |   -  
-    a(href='/submit') submit
+    h3 #{title}
     br
     br
     - for ( var i in submissions )
         - var sub = submissions[i]
-        div
-            a(href='/submissions/#{sub.id}') #{sub.title}
-            |   -  #{sub.submitter}
-        | #{sub.summary}
+            | #{sub.id}. <a href='/submissions/#{sub.id}'>#{sub.title}</a> - #{sub.submitter} - #{sub.time}
+            br
+            | #{sub.summary}
         br
         br
 

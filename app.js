@@ -24,15 +24,15 @@ GLOBAL.group = argv.g;
 GLOBAL.group_password = argv.p;
 
 // Include modules for their handler functions.
-var routes = require('./routes/index');  // routes/index.js  (default)
+var routes = require('./routes/index');   // routes/index.js  (default)
 var submit = require('./routes/submit');  // routes/submit.js
-var login = require('./routes/login');  // routes/submit.js
-var config = require('./config'); //handle initial config shit
+var login = require('./routes/login');    // routes/submit.js
+var config = require('./config');         // handle initial config
 
 // Create application.
 var app = express();
 
-//add config shit
+// add config
 var devenv = config.devenvironment(app, express);
 
 
@@ -57,7 +57,6 @@ var sha = crypto.createHash('sha1');
 sha.update( GLOBAL.group + GLOBAL.password + Date.now().toString() );
 var cookie_secret = sha.digest( 'hex' );
 
-
 GLOBAL.db = new sqlite3.Database( dbname, sqlite3.OPEN_READWRITE );
 
 // Set node/express variables.
@@ -81,9 +80,11 @@ app.use(app.router);
 // Set up routes and handlers.
 app.get( '/', function(req, res) { res.redirect('/index') } );
 app.get( '/index', routes.index );
-app.get( '/submit', submit.submit );  // use exported submit function in submit module.
-app.get( '/submissions/:id', submit.submission );  // display full info for the submission listed.
+app.get( '/submit', submit.submit );
+app.get( '/submissions/:id', submit.submission );
+app.get( '/delete/:id', submit.delete );
 app.post( '/submit', submit.submit_post );
+
 
 // Listen on the port / run app.
 http.createServer(app).listen(app.get('port'), function() {

@@ -17,7 +17,6 @@ var devenvironment = function ( app, express )
     }
 }
 
-// TODO: authorization!
 
 module.exports = {
     devenvironment: devenvironment

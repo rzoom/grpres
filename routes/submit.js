@@ -1,22 +1,34 @@
-
-/*
- * GET submit page
- * */
-
 var fs = require('fs');
 var sqlite3 = require('sqlite3');
 var moment = require('moment');
 
 
-exports.submit = function ( req, res ) {
-    res.render( 'submit',
-            { group: GLOBAL.group } );
+var get_post_path = function ( id )
+{
+    return ( GLOBAL.grppath + '/post_' + id );
 };
 
 
-var save_files_from_req = function( req, num ) {
+var get_body_file_path = function ( id )
+{
+    return ( get_post_path(id) + '/body.txt' );
+};
 
-    var post_path = GLOBAL.grppath + '/post_' + num;
+
+var get_body_file_text = function ( id )
+{
+    var body_path = get_body_file_path( id );
+
+    if ( fs.existsSync( body_path ) )
+    { return ( fs.readFileSync( body_path ) ); }
+    else
+    { return ( 'Empty' ); }
+};
+
+
+var save_files_from_req = function ( req, id )
+{
+    var post_path = get_post_path(id);
 
     if ( !fs.existsSync(post_path) )
     { fs.mkdirSync( post_path ); }
@@ -32,11 +44,11 @@ var save_files_from_req = function( req, num ) {
         if ( f.name )
         {
             var file_path = post_path + '/' + f.name;
-            var dl_path = 'post_' + num + '/' + f.name;
+            var dl_path = 'post_' + id + '/' + f.name;
             fs.writeFileSync( file_path, String( fs.readFileSync( f.path ) ) );
             fs.unlinkSync( f.path );
             GLOBAL.db.run( "INSERT INTO files (post_id, name, path) VALUES (?,?,?);",
-                    num, f.name, dl_path );
+                    id, f.name, dl_path );
         }
         // No name means no file was uploaded, delete the temp.
         else
@@ -45,8 +57,17 @@ var save_files_from_req = function( req, num ) {
 };
 
 
-exports.submit_post = function( req, res ) {
+exports.submit = function ( req, res )
+{
+    res.render( 'submit',
+            { group: GLOBAL.group,
+              body_placeholder: 'Optional',
+              action: '/submit' } );
+};
 
+
+exports.submit_post = function ( req, res )
+{
     GLOBAL.db.run(
         "INSERT INTO posts (time, submitter, title, summary) VALUES (?,?,?,?);",
         moment().format('MMM DD YYYY'), req.body.submitter, req.body.title, req.body.summary );
@@ -58,8 +79,23 @@ exports.submit_post = function( req, res ) {
 };
 
 
-exports.submission = function( req, res ) {
+exports.update_post = function ( req, res )
+{
+    var pid = req.params['id'];
 
+    GLOBAL.db.run(
+        "UPDATE posts SET time=?, submitter=?, title=?, summary=? WHERE id=?;",
+        moment().format('MMM DD YYYY'), req.body.submitter, req.body.title,
+        req.body.summary, pid );
+
+    save_files_from_req( req, pid );
+
+    res.redirect( '/index' );
+};
+
+
+exports.submission = function ( req, res )
+{
     var pid = req.params['id'];
 
     // Grab the post.
@@ -72,34 +108,24 @@ exports.submission = function( req, res ) {
             // Grab the associated files.
             GLOBAL.db.all( 'SELECT * FROM files WHERE post_id=?;', pid,
                 function(err, files) {
-                    var body_path = GLOBAL.grppath + '/post_' + pid + '/body.txt';
-                    var body;
-
-                    if ( fs.existsSync( body_path ) )
-                    { body = fs.readFileSync( body_path ); }
-                    else
-                    { body = '... Empty ...'; }
-
                     res.render( 'submission', { title: GLOBAL.group + ': ' + post['title'],
                                                 pid: pid,
-                                                subtitle: post['title'],
+                                                post_title: post['title'],
                                                 summary: post['summary'],
                                                 submitter: post['submitter'],
                                                 date: post['time'],
                                                 files: files,
-                                                body: body } );
+                                                body: get_body_file_text(pid) } );
                 });
         });
 };
 
 
-exports.delete = function( req, res ) {
-
+exports.delete = function ( req, res )
+{
     // This just deletes the info from the database, the files are still there.
 
     var pid = req.params['id'];
-
-    console.log( 'Deleting post ' + pid );
 
     GLOBAL.db.run( 'DELETE FROM posts WHERE id=?;', pid );
     GLOBAL.db.run( 'DELETE FROM files WHERE post_id=?;', pid );
@@ -107,5 +133,22 @@ exports.delete = function( req, res ) {
     res.redirect( '/index' );
 };
 
+
+exports.edit = function ( req, res )
+{
+    var pid = req.params['id'];
+
+    GLOBAL.db.get( 'SELECT * FROM posts WHERE id=?;', pid,
+            function ( err, post ) {
+                // TODO: Allow deleting files associated with this submission,
+                // and adding new files.
+                res.render( 'submit', { group: GLOBAL.group,
+                                        post_title: post['title'],
+                                        summary: post['summary'],
+                                        submitter: post['submitter'],
+                                        body: get_body_file_text(pid),
+                                        action: '/submit/'+pid } );
+            });
+};
 
 

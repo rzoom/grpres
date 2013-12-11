@@ -6,10 +6,10 @@ block content
     br
     - for ( var i in submissions )
         - var sub = submissions[i]
-            | #{sub.id}. <a href='/submissions/#{sub.id}'>#{sub.title}</a> - #{sub.submitter} - #{sub.time}
+            | <b><a href='/submissions/#{sub.id}'>#{sub.title}</a></b> &nbsp - &nbsp #{sub.submitter} &nbsp - &nbsp #{sub.time}
             br
             br
-            | #{sub.summary}
+            | &nbsp &nbsp &nbsp &nbsp #{sub.summary}
         br
         br
         br

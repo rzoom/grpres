@@ -83,7 +83,9 @@ app.get( '/index', routes.index );
 app.get( '/submit', submit.submit );
 app.get( '/submissions/:id', submit.submission );
 app.get( '/delete/:id', submit.delete );
+app.get( '/edit/:id', submit.edit );
 app.post( '/submit', submit.submit_post );
+app.post( '/submit/:id', submit.update_post );
 
 
 // Listen on the port / run app.

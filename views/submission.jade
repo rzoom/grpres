@@ -1,7 +1,10 @@
 extends layout
 
 block content
-    u: h3 #{subtitle}
+    u: h3 #{post_title}  
+    a(href='/edit/#{pid}') Edit this post
+    br
+    br
     | <b>Submitted by:</b>  #{submitter}
     | <b>Date:</b>  #{date}
     br

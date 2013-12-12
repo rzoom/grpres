@@ -82,8 +82,8 @@ app.get( '/', function(req, res) { res.redirect('/index') } );
 app.get( '/index', routes.index );
 app.get( '/submit', submit.submit );
 app.get( '/submissions/:id', submit.submission );
-app.get( '/delete/:id', submit.delete );
-app.get( '/edit/:id', submit.edit );
+app.get( '/delete/:id', submit.delete_post );
+app.get( '/edit/:id', submit.edit_post );
 app.post( '/submit', submit.submit_post );
 app.post( '/submit/:id', submit.update_post );
 

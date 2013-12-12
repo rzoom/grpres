@@ -11,7 +11,7 @@ block content
     br
     b Summary
     br
-    | #{summary}
+    textarea(rows=4 cols=80 readonly) #{summary}
     br
     br
     b Files
@@ -24,7 +24,7 @@ block content
     br
     b Body
     br
-    | #{body}
+    textarea(rows='#{body_rows}' cols=80 readonly) #{body}
     br
     br
     a(href='/delete/#{pid}') Delete this post

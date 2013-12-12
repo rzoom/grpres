@@ -20,9 +20,9 @@ var get_body_file_text = function ( id )
     var body_path = get_body_file_path( id );
 
     if ( fs.existsSync( body_path ) )
-    { return ( fs.readFileSync( body_path ) ); }
+    { return ( String(fs.readFileSync( body_path )) ); }
     else
-    { return ( 'Empty' ); }
+    { return ( String('Empty') ); }
 };
 
 
@@ -108,6 +108,9 @@ exports.submission = function ( req, res )
             // Grab the associated files.
             GLOBAL.db.all( 'SELECT * FROM files WHERE post_id=?;', pid,
                 function(err, files) {
+                    var post_body = get_body_file_text(pid);
+                    var body_newlines = post_body.split('\n').length - 1;
+                    var body_rows = post_body.length / 80 + body_newlines;
                     res.render( 'submission', { title: GLOBAL.group + ': ' + post['title'],
                                                 pid: pid,
                                                 post_title: post['title'],
@@ -115,13 +118,14 @@ exports.submission = function ( req, res )
                                                 submitter: post['submitter'],
                                                 date: post['time'],
                                                 files: files,
-                                                body: get_body_file_text(pid) } );
+                                                body: post_body,
+                                                body_rows: body_rows } );
                 });
         });
 };
 
 
-exports.delete = function ( req, res )
+exports.delete_post = function ( req, res )
 {
     // This just deletes the info from the database, the files are still there.
 
@@ -134,7 +138,7 @@ exports.delete = function ( req, res )
 };
 
 
-exports.edit = function ( req, res )
+exports.edit_post = function ( req, res )
 {
     var pid = req.params['id'];
 

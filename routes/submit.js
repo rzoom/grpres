@@ -131,8 +131,12 @@ exports.delete_post = function ( req, res )
 
     var pid = req.params['id'];
 
-    GLOBAL.db.run( 'DELETE FROM posts WHERE id=?;', pid );
-    GLOBAL.db.run( 'DELETE FROM files WHERE post_id=?;', pid );
+    // Verify that we came from the detailed submissions page.
+    if ( req.headers['referer'] == 'http://'+req.headers['host']+'/submissions/'+pid )
+    {
+        GLOBAL.db.run( 'DELETE FROM posts WHERE id=?;', pid );
+        GLOBAL.db.run( 'DELETE FROM files WHERE post_id=?;', pid );
+    }
 
     res.redirect( '/index' );
 };

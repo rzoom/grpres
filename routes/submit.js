@@ -45,7 +45,7 @@ var save_files_from_req = function ( req, id )
         {
             var file_path = post_path + '/' + f.name;
             var dl_path = 'post_' + id + '/' + f.name;
-            fs.writeFileSync( file_path, String( fs.readFileSync( f.path ) ) );
+            fs.writeFileSync( file_path, fs.readFileSync( f.path ) );
             fs.unlinkSync( f.path );
             GLOBAL.db.run( "INSERT INTO files (post_id, name, path) VALUES (?,?,?);",
                     id, f.name, dl_path );

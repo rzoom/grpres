@@ -106,7 +106,7 @@ exports.submission = function ( req, res )
             }
 
             // Grab the associated files.
-            GLOBAL.db.all( 'SELECT * FROM files WHERE post_id=?;', pid,
+            GLOBAL.db.all( 'SELECT * FROM files WHERE post_id=? ORDER BY name;', pid,
                 function(err, files) {
                     var post_body = get_body_file_text(pid);
                     var body_newlines = post_body.split('\n').length - 1;
